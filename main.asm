@@ -19,14 +19,35 @@ ReadLoop:
 	STORE  ReadCount
 	OUT    Hex1
 
-	CALL   ReadX       ; Get the X acceleration data
-	CALL   Filter      ; Calculate moving average
-	OUT    Hex0        ; Display data
+	CALL	ReadX       ; Get the X acceleration data
+	CALL	Abs
+	STORE	X_abs
+	CALL 	ReadY
+	CALL	Abs
+	STORE	Y_abs
+	CALL	ReadZ
+	CALL	Abs
+	STORE	Z_abs
+	
+	LOADI	0
+	ADD		X_abs
+	ADD		Y_abs
+	ADD		Z_abs
+	STORE	Mag
+	
+	
+	CALL	Filter      ; Calculate moving average
+	CALL	Hex0        ; Display data
 
 	; Manipuate the data to create a display on the LEDs.
 	CALL   BarGraph
 
 	JUMP   ReadLoop    ; Repeat forever
+	
+X_abs: DW 0
+Y_abs: DW 0
+Z_abs: DW 0
+Mag:   DW 0
 
 ; WaitForData will poll the ADXL345 until it responds that there is fresh data.
 ; Once this returns, you can read the accelerometer data and know that you
@@ -240,7 +261,8 @@ I2CError:
 	ADDI   &H12C       ; "I2C"
 	OUT    Hex0        ; display error message
 	JUMP   I2CError
-
+	
+	
 ;*******************************************************************************
 ; Abs: 2's complement absolute value
 ; Returns abs(AC) in AC
