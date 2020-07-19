@@ -20,34 +20,36 @@ ReadLoop:
 	OUT    Hex1
 
 	CALL	ReadX       ; Get the X acceleration data
-	CALL	Abs
-	STORE	X_abs
+	CALL	Square
+	STORE	X_squared
 	CALL 	ReadY
-	CALL	Abs
-	STORE	Y_abs
+	CALL	Square
+	STORE	Y_squared
 	CALL	ReadZ
-	CALL	Abs
-	STORE	Z_abs
+	CALL	Square
+	STORE	Z_squared
 	
 	LOADI	0
-	ADD		X_abs
-	ADD		Y_abs
-	ADD		Z_abs
-	STORE	Mag
+	ADD		X_squared
+	ADD		Y_squared
+	ADD		Z_squared
+	STORE	Mag_squared
 	
+	; test block -- REMOVE WHEN FINISHED
+	LOADI   25
+	;CALL    Square
 	
+	OUT		Hex0        ; Display unfiltered data
 	CALL	Filter      ; Calculate moving average
-	CALL	Hex0        ; Display data
-
 	; Manipuate the data to create a display on the LEDs.
 	CALL   BarGraph
 
 	JUMP   ReadLoop    ; Repeat forever
 	
-X_abs: DW 0
-Y_abs: DW 0
-Z_abs: DW 0
-Mag:   DW 0
+X_squared: DW 0
+Y_squared: DW 0
+Z_squared: DW 0
+Mag_squared:   DW 0
 
 ; Used for peak detection
 StartVec0: DW 0
@@ -99,7 +101,7 @@ NoPeak: ; Shift everything down
 	RETURN
 	
 PeakDetected:
-	LOADI	0
+	RETURN
 ; WaitForData will poll the ADXL345 until it responds that there is fresh data.
 ; Once this returns, you can read the accelerometer data and know that you
 ; aren't reading the same data more than once.
@@ -327,6 +329,33 @@ Neg:
 	ADDI   1            ; Add one (i.e. negate number)
 Abs_r:
 	RETURN
+
+; Returns AC^2 in AC
+Square:
+	CALL  Abs
+	STORE SquareInput
+	STORE Index
+	LOADI 0
+	STORE SquareVal
+UpdateSquare:
+	; check and decrement index
+	LOAD  Index
+	JZERO SquareFound
+	SUB   NegOne
+	STORE Index
+	
+	; update squareVal
+	LOAD  SquareVal
+	ADD   SquareInput
+	STORE SquareVal
+	
+	JUMP  UpdateSquare
+SquareFound:
+	LOAD  SquareVal
+	RETURN
+SquareInput: DW 0
+Index:		 DW 0
+SquareVal:	 DW 0
 
 ; I2C Constants
 I2CWCmd:  DW &H203A    ; write two i2c bytes, addr 0x3A
