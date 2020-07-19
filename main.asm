@@ -14,10 +14,10 @@ ReadLoop:
 	; (The subroutine doesn't do anything yet. It just returns immediately.)
 	
 	; Increment the acquisition counter and display it	
-	LOAD   ReadCount
-	ADDI   1
-	STORE  ReadCount
-	OUT    Hex1
+	; LOAD   ReadCount
+	; ADDI   1
+	; STORE  ReadCount
+	; OUT    Hex1
 
 	CALL	ReadX       ; Get the X acceleration data
 	CALL	Square
@@ -34,10 +34,6 @@ ReadLoop:
 	ADD		Y_squared
 	ADD		Z_squared
 	STORE	Mag_squared
-	
-	; test block -- REMOVE WHEN FINISHED
-	LOADI   25
-	;CALL    Square
 	
 	OUT		Hex0        ; Display unfiltered data
 	CALL	Filter      ; Calculate moving average
@@ -341,7 +337,7 @@ UpdateSquare:
 	; check and decrement index
 	LOAD  Index
 	JZERO SquareFound
-	SUB   NegOne
+	ADD   NegOne
 	STORE Index
 	
 	; update squareVal
@@ -352,6 +348,7 @@ UpdateSquare:
 	JUMP  UpdateSquare
 SquareFound:
 	LOAD  SquareVal
+	;CALL  Abs
 	RETURN
 SquareInput: DW 0
 Index:		 DW 0
@@ -370,9 +367,9 @@ AccZAddr: DW &H36      ; Z
 AccCfg: ; List of commands to send the ADXL345 at startup
 	DW 5           ; Number of commands to send
 	DW &H0000      ; Meaningless write to sync communication
-	DW &H3100      ; Right-justified 10-bit data, +/-2 G
+	DW &H3101      ; Right-justified 10-bit data, +/-2 G
 	DW &H3800      ; No FIFO
-	DW &H2C06      ; 6.25 samples per second
+	DW &H2C0A      ; 6.25 samples per second
 	DW &H2D08      ; No sleep
 
 
