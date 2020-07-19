@@ -50,12 +50,12 @@ Z_abs: DW 0
 Mag:   DW 0
 
 ; Used for peak detection
-StartVec0 DW 0
-StartVec1 DW 0
-StartVec2 DW 0 
-EndVec0  DW 0
-EndVec1  DW 0
-EndVec2  DW 0
+StartVec0: DW 0
+StartVec1: DW 0
+StartVec2: DW 0 
+EndVec0:  DW 0
+EndVec1:  DW 0
+EndVec2:  DW 0
 
 DetectPeak:
 	LOAD StartVec0
@@ -78,7 +78,7 @@ DetectPeak:
 	SUB  EndVec2
 	JPOS NoPeak
 
-	Jump PeakDetected ; TODO handling peak detected
+	JUMP PeakDetected ; TODO handling peak detected
 
 NoPeak: ; Shift everything down
 	LOAD StartVec1
@@ -97,7 +97,9 @@ NoPeak: ; Shift everything down
 	STORE EndVec1
 
 	RETURN
-
+	
+PeakDetected:
+	LOADI	0
 ; WaitForData will poll the ADXL345 until it responds that there is fresh data.
 ; Once this returns, you can read the accelerometer data and know that you
 ; aren't reading the same data more than once.
