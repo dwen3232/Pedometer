@@ -1,9 +1,10 @@
 Loop:
-	LOAD Counter
-	OUT Hex1
-	IN  KEY1
-	JPOS AddOne
-	JUMP LOOP
+	CALL	KeyTest
+	LOAD	KeyPressed
+	JPOS	AddOne
+	LOAD	Counter
+	OUT		Hex0
+	Jump	Loop
 
 AddOne:
 	LOAD Counter
@@ -11,7 +12,46 @@ AddOne:
 	STORE Counter
 	RETURN
 	
-Counter:  DW 5
+KeyTest:
+	LOADI	0
+	STORE	KeyPressed
+	LOAD	KeyDown
+	AND		Bit0
+	JPOS	WasDown
+	
+	
+	IN		Key1
+	AND		Bit0
+	JZERO	NotPressed
+	LOADI	1
+	STORE	KeyDown
+	JUMP	NotPressed
+	
+	WasDown:
+		IN		Key1
+		AND		Bit0
+		JPOS	NotPressed
+		LOADI	0
+		STORE	KeyDown
+		Jump	Pressed
+	
+	
+	NotPressed:
+			LOADI	0
+			STORE	KeyPressed
+			RETURN
+			
+	Pressed:
+			LOADI	1
+			STORE	KeyPressed
+			RETURN
+	
+
+	
+KeyDown:	DW 0
+KeyPressed: DW 1
+Bit0:      DW &B0000000001
+Counter:	DW 0
 
 ; IO address constants
 Switches:  EQU &H000

@@ -40,11 +40,36 @@ ReadLoop:
 	OUT		Hex0        ; Display unfiltered data
 	
 	CALL	DetectPeak
+	
+	CALL	KeyTest
+	LOAD	KeyPressed
+	JZERO	ShowHex1
+	LOAD	ShowDist
+	XOR		Bit0
+	STORE	ShowDist
+	
+	ShowHex1:
+		LOAD	ShowDist
+		JPOS	DisplayDist
+		LOAD	StepCount
+		LOADI	0
+		OUT		LEDs
+		JUMP	UpdateHex1
+	
+	DisplayDist:
+		LOADI	1
+		OUT		LEDs
+		LOAD	Dist
+		
+	UpdateHex1:
+		OUT		Hex1
+
 	JUMP    ReadLoop    ; Repeat forever
 X_squared: 	   DW 0
 Y_squared: 	   DW 0
 Z_squared: 	   DW 0
 Mag_squared:   DW 0
+
 
 
 DetectPeak:
@@ -119,14 +144,60 @@ UpdateEndVec:
 	LOAD	StepCount
 	ADDI	1
 	STORE	StepCount
-	OUT		Hex1
+	LOAD	StepCount
+	Shift	2
+	STORE	Dist
 	
+
+	
+
 	LOAD	EndTime1
 	SUB		StartTime0
 	STORE	TimeInPeak
 EndDetectPeak:
 	; subroutine ends here
 	RETURN
+	
+ShowDist:	DW 0 ; 0 to show step, 1 to show distance
+
+
+
+KeyTest:
+	LOADI	0
+	STORE	KeyPressed
+	LOAD	KeyDown
+	AND		Bit0
+	JPOS	WasDown
+	
+	
+	IN		Key1
+	AND		Bit0
+	JZERO	NotPressed
+	LOADI	1
+	STORE	KeyDown
+	JUMP	NotPressed
+	
+	WasDown:
+		IN		Key1
+		AND		Bit0
+		JPOS	NotPressed
+		LOADI	0
+		STORE	KeyDown
+		Jump	Pressed
+	
+	
+	NotPressed:
+			LOADI	0
+			STORE	KeyPressed
+			RETURN
+			
+	Pressed:
+			LOADI	1
+			STORE	KeyPressed
+			RETURN
+			
+KeyDown:	DW 0
+KeyPressed: DW 0
 
 ; Used for peak detection
 StartVec0: 	   DW 0
@@ -422,6 +493,7 @@ AccCfg: ; List of commands to send the ADXL345 at startup
 
 ; Variables
 StepCount: DW 0
+Dist:	   DW 0
 ReadCount: DW 0
 Score:     DW 0
 
@@ -461,3 +533,4 @@ Hex1:      EQU &H005
 I2C_cmd:   EQU &H090
 I2C_data:  EQU &H091
 I2C_rdy:   EQU &H092
+Key1:      EQU &H006

@@ -1,0 +1,50 @@
+-- Altera Memory Initialization File (MIF)
+
+DEPTH = 2048;
+WIDTH = 16;
+
+ADDRESS_RADIX = HEX;
+DATA_RADIX = HEX;
+
+CONTENT
+  BEGIN
+    [000..7FF] : 0000;  -- Default to NOP
+
+           000 : 800A;  -- 	CALL	KeyTest
+           001 : 0822;  -- 	LOAD	KeyPressed
+           002 : 3806;  -- 	JPOS	AddOne
+           003 : 0824;  -- 	LOAD	Counter
+           004 : 9804;  -- 	OUT		Hex0
+           005 : 2800;  -- 	Jump	Loop
+           006 : 0824;  -- 	LOAD Counter
+           007 : 6801;  -- 	ADDI 1
+           008 : 1024;  -- 	STORE Counter
+           009 : 8800;  -- 	RETURN
+           00A : B800;  -- 	LOADI	0
+           00B : 1022;  -- 	STORE	KeyPressed
+           00C : 0821;  -- 	LOAD	KeyDown
+           00D : 4823;  -- 	AND		Bit0
+           00E : 3815;  -- 	JPOS	WasDown
+           00F : 9006;  -- 	IN		Key1
+           010 : 4823;  -- 	AND		Bit0
+           011 : 401B;  -- 	JZERO	NotPressed
+           012 : B801;  -- 	LOADI	1
+           013 : 1021;  -- 	STORE	KeyDown
+           014 : 281B;  -- 	JUMP	NotPressed
+           015 : 9006;  -- 		IN		Key1
+           016 : 4823;  -- 		AND		Bit0
+           017 : 381B;  -- 		JPOS	NotPressed
+           018 : B800;  -- 		LOADI	0
+           019 : 1021;  -- 		STORE	KeyDown
+           01A : 281E;  -- 		Jump	Pressed
+           01B : B800;  -- 			LOADI	0
+           01C : 1022;  -- 			STORE	KeyPressed
+           01D : 8800;  -- 			RETURN
+           01E : B801;  -- 			LOADI	1
+           01F : 1022;  -- 			STORE	KeyPressed
+           020 : 8800;  -- 			RETURN
+           021 : 0000;  -- KeyDown:	DW 0
+           022 : 0001;  -- KeyPressed: DW 1
+           023 : 0001;  -- Bit0:      DW &B0000000001
+           024 : 0000;  -- Counter:	DW 0
+  END;
