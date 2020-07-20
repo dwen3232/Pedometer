@@ -7,7 +7,8 @@
 ORG 0
 	CALL   SetupI2C    ; Configure ADXL345
 	LOADI  0
-	STORE  ReadCount   ; Initialize counter for display
+	STORE  ReadCount   ; Initialize loop counter
+	STORE  StepCount   ; Initialize step counter
 	
 ReadLoop:
 	CALL    WaitForData ; Subroutine to wait for new data
@@ -37,8 +38,7 @@ ReadLoop:
 	
 	CALL	Filter      ; Calculate moving average
 	OUT		Hex0        ; Display unfiltered data
-	; Manipuate the data to create a display on the LEDs.
-	; CALL    BarGraph
+	
 	CALL	DetectPeak
 	JUMP    ReadLoop    ; Repeat forever
 X_squared: 	   DW 0
@@ -413,9 +413,9 @@ AccZAddr: DW &H36      ; Z
 AccCfg: ; List of commands to send the ADXL345 at startup
 	DW 5           ; Number of commands to send
 	DW &H0000      ; Meaningless write to sync communication
-	DW &H3101      ; Right-justified 10-bit data, +/-2 G
+	DW &H3101      ; Right-justified 10-bit data, +/-8 G
 	DW &H3800      ; No FIFO
-	DW &H2C08      ; 6.25 samples per second
+	DW &H2C08      ; 50 samples per second
 	DW &H2D08      ; No sleep
 
 
