@@ -91,6 +91,7 @@ InPeak:
 	JNEG	UpdateEndVec
 	LOAD 	Mag_squared
 	STORE	MaxPeakValue
+	JUMP	EndDetectPeak
 UpdateEndVec:
 	; update EndVec aquisition values and timestamps
 	LOAD	EndVec1
