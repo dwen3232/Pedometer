@@ -37,32 +37,32 @@ ReadLoop:
 	STORE	Mag_squared
 	
 	CALL	Filter      ; Calculate moving average
-	OUT		Hex0        ; Display unfiltered data
+	; OUT		Hex0        ; Display unfiltered data
 	
 	CALL	DetectPeak
 	
 	CALL	KeyTest
 	LOAD	KeyPressed
-	JZERO	ShowHex1
+	JZERO	ShowHex0
 	LOAD	ShowDist
 	XOR		Bit0
 	STORE	ShowDist
 	
-	ShowHex1:
+	ShowHex0:
 		LOAD	ShowDist
 		JPOS	DisplayDist
 		LOAD	StepCount
 		LOADI	0
 		OUT		LEDs
-		JUMP	UpdateHex1
+		JUMP	UpdateHex0
 	
 	DisplayDist:
 		LOADI	1
 		OUT		LEDs
 		LOAD	Dist
 		
-	UpdateHex1:
-		OUT		Hex1
+	UpdateHex0:
+		OUT		Hex0
 
 	JUMP    ReadLoop    ; Repeat forever
 X_squared: 	   DW 0
@@ -426,7 +426,7 @@ BI2CL:
 I2CError:
 	LOAD   Zero
 	ADDI   &H12C       ; "I2C"
-	OUT    Hex0        ; display error message
+	OUT    Hex1        ; display error message
 	JUMP   I2CError
 Temp:      DW 0
 	
