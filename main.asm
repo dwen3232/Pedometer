@@ -54,6 +54,7 @@ ReadLoop:
 		LOAD	StepCount
 		LOADI	0
 		OUT		LEDs
+		LOAD	StepCount
 		JUMP	UpdateHex0
 	
 	DisplayDist:
@@ -486,7 +487,7 @@ AccCfg: ; List of commands to send the ADXL345 at startup
 	DW &H0000      ; Meaningless write to sync communication
 	DW &H3101      ; Right-justified 10-bit data, +/-8 G
 	DW &H3800      ; No FIFO
-	DW &H2C08      ; 50 samples per second
+	DW &H2C07      ; 50 samples per second
 	DW &H2D08      ; No sleep
 
 
