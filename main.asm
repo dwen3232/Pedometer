@@ -9,6 +9,7 @@ ORG 0
 	LOADI  0
 	STORE  ReadCount   ; Initialize loop counter
 	STORE  StepCount   ; Initialize step counter
+	STORE  Dist		   ; Initialize distance counter
 	
 ReadLoop:
 	CALL    WaitForData ; Subroutine to wait for new data
