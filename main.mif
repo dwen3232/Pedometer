@@ -10,350 +10,351 @@ CONTENT
   BEGIN
     [000..7FF] : 0000;  -- Default to NOP
 
-           000 : 80CE;  -- 	CALL   SetupI2C    ; Configure ADXL345
+           000 : 80CF;  -- 	CALL   SetupI2C    ; Configure ADXL345
            001 : B800;  -- 	LOADI  0
-           002 : 1142;  -- 	STORE  ReadCount   ; Initialize loop counter
-           003 : 1140;  -- 	STORE  StepCount   ; Initialize step counter
-           004 : 808F;  -- 	CALL    WaitForData ; Subroutine to wait for new data
-           005 : 0942;  -- 	LOAD   ReadCount
-           006 : 6801;  -- 	ADDI   1
-           007 : 1142;  -- 	STORE  ReadCount
-           008 : 80E7;  -- 	CALL	ReadX       ; Get the X acceleration data
-           009 : 8121;  -- 	CALL	Square
-           00A : 102B;  -- 	STORE	X_squared
-           00B : 80F1;  -- 	CALL 	ReadY
-           00C : 8121;  -- 	CALL	Square
-           00D : 102C;  -- 	STORE	Y_squared
-           00E : 80FB;  -- 	CALL	ReadZ
-           00F : 8121;  -- 	CALL	Square
-           010 : 102D;  -- 	STORE	Z_squared
-           011 : B800;  -- 	LOADI	0
-           012 : 182B;  -- 	ADD		X_squared
-           013 : 182C;  -- 	ADD		Y_squared
-           014 : 182D;  -- 	ADD		Z_squared
-           015 : 2153;  -- 	SUB     NormConst
-           016 : 102E;  -- 	STORE	Mag_squared
-           017 : 8099;  -- 	CALL	Filter      ; Calculate moving average
-           018 : 802F;  -- 	CALL	DetectPeak
-           019 : 8069;  -- 	CALL	KeyTest
-           01A : 0881;  -- 	LOAD	KeyPressed
-           01B : 401F;  -- 	JZERO	ShowHex0
-           01C : 0868;  -- 	LOAD	ShowDist
-           01D : 5947;  -- 	XOR		Bit0
-           01E : 1068;  -- 	STORE	ShowDist
-           01F : 0868;  -- 		LOAD	ShowDist
-           020 : 3826;  -- 		JPOS	DisplayDist
-           021 : 0940;  -- 		LOAD	StepCount
-           022 : B800;  -- 		LOADI	0
-           023 : 9801;  -- 		OUT		LEDs
-           024 : 0940;  -- 		LOAD	StepCount
-           025 : 2829;  -- 		JUMP	UpdateHex0
-           026 : B801;  -- 		LOADI	1
-           027 : 9801;  -- 		OUT		LEDs
-           028 : 0941;  -- 		LOAD	Dist
-           029 : 9804;  -- 		OUT		Hex0
-           02A : 2804;  -- 	JUMP    ReadLoop    ; Repeat forever
-           02B : 0000;  -- X_squared: 	   DW 0
-           02C : 0000;  -- Y_squared: 	   DW 0
-           02D : 0000;  -- Z_squared: 	   DW 0
-           02E : 0000;  -- Mag_squared:   DW 0
-           02F : 088C;  -- 	LOAD	InPeakBoolean
-           030 : 3848;  -- 	JPOS	InPeak
-           031 : 0884;  -- 	LOAD	StartVec1
-           032 : 1082;  -- 	STORE	StartVec0
-           033 : 0885;  -- 	LOAD	StartTime1
-           034 : 1083;  -- 	STORE	StartTime0
-           035 : 0886;  -- 	LOAD	StartVec2
-           036 : 1084;  -- 	STORE	StartVec1
-           037 : 0887;  -- 	LOAD	StartTime2
-           038 : 1085;  -- 	STORE	StartTime1
-           039 : 082E;  -- 	LOAD	Mag_squared
-           03A : 1086;  -- 	STORE	StartVec2
-           03B : 0942;  -- 	LOAD	ReadCount
-           03C : 1087;  -- 	STORE	StartTime2
-           03D : 0882;  -- 	LOAD 	StartVec0
-           03E : 2084;  -- 	SUB  	StartVec1
-           03F : 3867;  -- 	JPOS 	EndDetectPeak
-           040 : 0884;  -- 	LOAD 	StartVec1
-           041 : 2086;  -- 	SUB  	StartVec2
-           042 : 3867;  -- 	JPOS 	EndDetectPeak
-           043 : 0886;  -- 	LOAD	StartVec2
-           044 : 2154;  -- 	SUB		Threshold
-           045 : 3067;  -- 	JNEG	EndDetectPeak
-           046 : B801;  -- 	LOADI	1
-           047 : 108C;  -- 	STORE	InPeakBoolean
-           048 : 082E;  -- 	LOAD	Mag_squared
-           049 : 208D;  -- 	SUB		MaxPeakValue
-           04A : 304E;  -- 	JNEG	UpdateEndVec
-           04B : 082E;  -- 	LOAD 	Mag_squared
-           04C : 108D;  -- 	STORE	MaxPeakValue
-           04D : 2867;  -- 	JUMP	EndDetectPeak
-           04E : 088A;  -- 	LOAD	EndVec1
-           04F : 1088;  -- 	STORE	EndVec0
-           050 : 088B;  -- 	LOAD	EndTime1
-           051 : 1089;  -- 	STORE	EndTime0
-           052 : 082E;  -- 	LOAD	Mag_squared
-           053 : 108A;  -- 	STORE	EndVec1
-           054 : 0942;  -- 	LOAD	ReadCount
-           055 : 108B;  -- 	STORE	EndTime1
-           056 : 0888;  -- 	LOAD	EndVec0
-           057 : 208A;  -- 	SUB		EndVec1
-           058 : 3867;  -- 	JPOS	EndDetectPeak
-           059 : 088A;  -- 	LOAD	EndVec1
-           05A : 2154;  -- 	SUB		Threshold
-           05B : 3867;  -- 	JPOS	EndDetectPeak
-           05C : B800;  -- 	LOADI	0
-           05D : 108C;  -- 	STORE	InPeakBoolean
-           05E : 0940;  -- 	LOAD	StepCount
-           05F : 6801;  -- 	ADDI	1
-           060 : 1140;  -- 	STORE	StepCount
-           061 : 0940;  -- 	LOAD	StepCount
-           062 : 6002;  -- 	Shift	2
-           063 : 1141;  -- 	STORE	Dist
-           064 : 088B;  -- 	LOAD	EndTime1
-           065 : 2083;  -- 	SUB		StartTime0
-           066 : 108E;  -- 	STORE	TimeInPeak
-           067 : 8800;  -- 	RETURN
-           068 : 0000;  -- ShowDist:	DW 0 ; 0 to show step, 1 to show distance
-           069 : B800;  -- 	LOADI	0
-           06A : 1081;  -- 	STORE	KeyPressed
-           06B : 0880;  -- 	LOAD	KeyDown
-           06C : 4947;  -- 	AND		Bit0
-           06D : 3874;  -- 	JPOS	WasDown
-           06E : 9006;  -- 	IN		Key1
-           06F : 4947;  -- 	AND		Bit0
-           070 : 407A;  -- 	JZERO	NotPressed
-           071 : B801;  -- 	LOADI	1
-           072 : 1080;  -- 	STORE	KeyDown
-           073 : 287A;  -- 	JUMP	NotPressed
-           074 : 9006;  -- 		IN		Key1
-           075 : 4947;  -- 		AND		Bit0
-           076 : 387A;  -- 		JPOS	NotPressed
-           077 : B800;  -- 		LOADI	0
-           078 : 1080;  -- 		STORE	KeyDown
-           079 : 287D;  -- 		Jump	Pressed
-           07A : B800;  -- 			LOADI	0
-           07B : 1081;  -- 			STORE	KeyPressed
-           07C : 8800;  -- 			RETURN
-           07D : B801;  -- 			LOADI	1
-           07E : 1081;  -- 			STORE	KeyPressed
-           07F : 8800;  -- 			RETURN
-           080 : 0000;  -- KeyDown:	DW 0
-           081 : 0000;  -- KeyPressed: DW 0
-           082 : 0000;  -- StartVec0: 	   DW 0
-           083 : 0000;  -- StartTime0:	   DW 0
-           084 : 0000;  -- StartVec1: 	   DW 0
-           085 : 0000;  -- StartTime1:	   DW 0
-           086 : 0000;  -- StartVec2: 	   DW 0
-           087 : 0000;  -- StartTime2:	   DW 0 
-           088 : 0000;  -- EndVec0:	   DW 0
-           089 : 0000;  -- EndTime0:	   DW 0
-           08A : 0000;  -- EndVec1:	   DW 0
-           08B : 0000;  -- EndTime1:	   DW 0
-           08C : 0000;  -- InPeakBoolean: DW 0
-           08D : 0000;  -- MaxPeakValue:  DW 0
-           08E : 0000;  -- TimeInPeak:	   DW 0
-           08F : 0934;  -- 	LOAD I2CR1Cmd     ; 1 byte will be written
-           090 : 9890;  -- 	OUT  I2C_CMD
-           091 : 0936;  -- 	LOAD INT_SOURCE   ; address of the INT_SOURCE register
-           092 : 9891;  -- 	OUT  I2C_DATA
-           093 : 9892;  -- 	OUT  I2C_RDY      ; start communictaion
-           094 : 810F;  -- 	CALL BlockI2C
-           095 : 9091;  -- 	IN   I2C_DATA     ; Load data
-           096 : 494E;  -- 	AND  Bit7         ; Mask for DATA_READY 
-           097 : 408F;  -- 	JZERO WaitForData ; If DATA_READY inactive
-           098 : 8800;  -- 	RETURN
-           099 : 1159;  -- 	STORE  Xtemp        ; Store the acceleration data first
-           09A : 0956;  -- 	LOAD   X1           ; Shift queue down
-           09B : 1155;  -- 	STORE  X0
-           09C : 0957;  -- 	LOAD   X2
-           09D : 1156;  -- 	STORE  X1
-           09E : 0958;  -- 	LOAD   X3
-           09F : 1157;  -- 	STORE  X2
-           0A0 : 0959;  -- 	LOAD   Xtemp
-           0A1 : 1158;  -- 	STORE  X3
-           0A2 : 80A4;  -- 	CALL   Average
-           0A3 : 8800;  -- 	RETURN
-           0A4 : 0955;  --     LOAD X0
-           0A5 : 1956;  -- 	ADD  X1
-           0A6 : 1957;  -- 	ADD  X2
-           0A7 : 1958;  -- 	ADD  X3
-           0A8 : 6012;  -- 	SHIFT -2
-           0A9 : 8800;  -- 	RETURN
-           0AA : 6015;  -- 	SHIFT  -5
-           0AB : 10C7;  -- 	STORE  BarVal
-           0AC : 40C5;  -- 	JZERO  DisplayBar
-           0AD : 38BA;  -- 	JPOS   BarLeft
-           0AE : B800;  -- 	LOADI  0
-           0AF : 10C8;  -- 	STORE  CurrBar
-           0B0 : 08C8;  -- 	LOAD   CurrBar
-           0B1 : 6001;  -- 	SHIFT  1
-           0B2 : 6801;  -- 	ADDI   1
-           0B3 : 10C8;  -- 	STORE  CurrBar
-           0B4 : 08C7;  -- 	LOAD   BarVal
-           0B5 : 6801;  -- 	ADDI   1
-           0B6 : 10C7;  -- 	STORE  BarVal
-           0B7 : 30B0;  -- 	JNEG   BarRightLoop
-           0B8 : 08C8;  -- 	LOAD   CurrBar
-           0B9 : 28C5;  -- 	JUMP   DisplayBar
-           0BA : BC00;  -- 	LOADI  &B10000000000
-           0BB : 10C8;  -- 	STORE  CurrBar
-           0BC : 08C8;  -- 	LOAD   CurrBar
-           0BD : 6011;  -- 	SHIFT  -1
-           0BE : 10C8;  -- 	STORE  CurrBar
-           0BF : 08C7;  -- 	LOAD   BarVal
-           0C0 : 6FFF;  -- 	ADDI   -1
-           0C1 : 10C7;  -- 	STORE  BarVal
-           0C2 : 38BC;  -- 	JPOS   BarLeftLoop
-           0C3 : 08C8;  -- 	LOAD   CurrBar
-           0C4 : 28C5;  -- 	JUMP   DisplayBar
-           0C5 : 9801;  -- 	OUT    LEDs
-           0C6 : 8800;  -- 	RETURN
-           0C7 : 0000;  -- BarVal:    DW 0             ; Incoming data value
-           0C8 : 0000;  -- CurrBar:   DW 0             ; Current LED display
-           0C9 : 9802;  -- 	OUT    Timer
-           0CA : 9002;  -- 	IN     Timer
-           0CB : 6FFF;  -- 	ADDI   -1
-           0CC : 30CA;  -- 	JNEG   WaitingLoop
-           0CD : 8800;  -- 	RETURN
-           0CE : 093A;  -- 	LOAD   AccCfg      ; load the number of commands
-           0CF : 10E3;  -- 	STORE  CmdCnt
-           0D0 : B93A;  -- 	LOADI  AccCfg      ; Load list ADDRESS
-           0D1 : 6801;  -- 	ADDI   1           ; Increment to first command
-           0D2 : 10E2;  -- 	STORE  CmdPtr
-           0D3 : 810F;  -- 	CALL   BlockI2C    ; wait for idle
-           0D4 : 0933;  -- 	LOAD   I2CWCmd     ; load write command
-           0D5 : 9890;  -- 	OUT    I2C_CMD     ; to I2C_CMD register
-           0D6 : 70E2;  -- 	ILOAD  CmdPtr      ; load current command
-           0D7 : 9891;  -- 	OUT    I2C_DATA    ; to I2C_DATA register
-           0D8 : 9892;  -- 	OUT    I2C_RDY     ; start the communication
-           0D9 : 810F;  -- 	CALL   BlockI2C    ; wait for it to finish
-           0DA : 08E2;  -- 	LOAD   CmdPtr
-           0DB : 6801;  -- 	ADDI   1           ; Increment to next command
-           0DC : 10E2;  -- 	STORE  CmdPtr
-           0DD : 08E3;  -- 	LOAD   CmdCnt
-           0DE : 6FFF;  -- 	ADDI   -1
-           0DF : 10E3;  -- 	STORE  CmdCnt
-           0E0 : 38D3;  -- 	JPOS   I2CCmdLoop
-           0E1 : 8800;  -- 	RETURN
-           0E2 : 0000;  -- CmdPtr: DW 0
-           0E3 : 0000;  -- CmdCnt: DW 0
-           0E4 : 0000;  -- CurrX: DW 0
-           0E5 : 0000;  -- CurrY: DW 0
-           0E6 : 0000;  -- CurrZ: DW 0
-           0E7 : 810F;  -- 	CALL   BlockI2C    ; wait for idle
-           0E8 : 0935;  -- 	LOAD   I2CR2Cmd    ; load command
-           0E9 : 9890;  -- 	OUT    I2C_CMD     ; to I2C_CMD register
-           0EA : 0937;  -- 	LOAD   AccXAddr    ; 
-           0EB : 9891;  -- 	OUT    I2C_DATA    ; to I2C_DATA register
-           0EC : 9892;  -- 	OUT    I2C_RDY     ; start the communication
-           0ED : 810F;  -- 	CALL   BlockI2C    ; wait for it to finish
-           0EE : 9091;  -- 	IN     I2C_data    ; put the data in AC
-           0EF : 8105;  -- 	CALL   SwapBytes   ; bytes returned in wrong order; swap them
-           0F0 : 8800;  -- 	RETURN
-           0F1 : 810F;  -- 	CALL   BlockI2C    ; wait for idle
-           0F2 : 0935;  -- 	LOAD   I2CR2Cmd    ; load command
-           0F3 : 9890;  -- 	OUT    I2C_CMD     ; to I2C_CMD register
-           0F4 : 0938;  -- 	LOAD   AccYAddr    ; 
-           0F5 : 9891;  -- 	OUT    I2C_DATA    ; to I2C_DATA register
-           0F6 : 9892;  -- 	OUT    I2C_RDY     ; start the communication
-           0F7 : 810F;  -- 	CALL   BlockI2C    ; wait for it to finish
-           0F8 : 9091;  -- 	IN     I2C_data    ; put the data in AC
-           0F9 : 8105;  -- 	CALL   SwapBytes   ; bytes returned in wrong order; swap them
-           0FA : 8800;  -- 	RETURN
-           0FB : 810F;  -- 	CALL   BlockI2C    ; wait for idle
-           0FC : 0935;  -- 	LOAD   I2CR2Cmd    ; load command
-           0FD : 9890;  -- 	OUT    I2C_CMD     ; to I2C_CMD register
-           0FE : 0939;  -- 	LOAD   AccZAddr    ; 
-           0FF : 9891;  -- 	OUT    I2C_DATA    ; to I2C_DATA register
-           100 : 9892;  -- 	OUT    I2C_RDY     ; start the communication
-           101 : 810F;  -- 	CALL   BlockI2C    ; wait for it to finish
-           102 : 9091;  -- 	IN     I2C_data    ; put the data in AC
-           103 : 8105;  -- 	CALL   SwapBytes   ; bytes returned in wrong order; swap them
-           104 : 8800;  -- 	RETURN
-           105 : 110D;  -- 	STORE  SBT1
-           106 : 6008;  -- 	SHIFT  8
-           107 : 110E;  -- 	STORE  SBT2
-           108 : 090D;  -- 	LOAD   SBT1
-           109 : 6018;  -- 	SHIFT  -8
-           10A : 4951;  -- 	AND    LoByte
-           10B : 510E;  -- 	OR     SBT2
-           10C : 8800;  -- 	RETURN
-           10D : 0000;  -- SBT1: DW 0
-           10E : 0000;  -- SBT2: DW 0
-           10F : 0944;  -- 	LOAD   Zero
-           110 : 111C;  -- 	STORE  Temp        ; Used to check for timeout
-           111 : 091C;  -- 	LOAD   Temp
-           112 : 6801;  -- 	ADDI   1           ; this will result in ~0.1s timeout
-           113 : 111C;  -- 	STORE  Temp
-           114 : 4118;  -- 	JZERO  I2CError    ; Timeout occurred; error
-           115 : 9092;  -- 	IN     I2C_RDY     ; Read busy signal
-           116 : 3911;  -- 	JPOS   BI2CL       ; If not 0, try again
-           117 : 8800;  -- 	RETURN             ; Else return
-           118 : 0944;  -- 	LOAD   Zero
-           119 : 692C;  -- 	ADDI   &H12C       ; "I2C"
-           11A : 9805;  -- 	OUT    Hex1        ; display error message
-           11B : 2918;  -- 	JUMP   I2CError
-           11C : 0000;  -- Temp:      DW 0
-           11D : 3920;  -- 	JPOS   Abs_r
-           11E : 5945;  -- 	XOR    NegOne       ; Flip all bits
-           11F : 6801;  -- 	ADDI   1            ; Add one (i.e. negate number)
-           120 : 8800;  -- 	RETURN
-           121 : 811D;  -- 	CALL  Abs
-           122 : 1130;  -- 	STORE SquareInput
-           123 : 1131;  -- 	STORE Index
-           124 : B800;  -- 	LOADI 0
-           125 : 1132;  -- 	STORE SquareVal
-           126 : 0931;  -- 	LOAD  Index
-           127 : 412E;  -- 	JZERO SquareFound
-           128 : 1945;  -- 	ADD   NegOne
-           129 : 1131;  -- 	STORE Index
-           12A : 0932;  -- 	LOAD  SquareVal
-           12B : 1930;  -- 	ADD   SquareInput
-           12C : 1132;  -- 	STORE SquareVal
-           12D : 2926;  -- 	JUMP  UpdateSquare
-           12E : 0932;  -- 	LOAD  SquareVal
-           12F : 8800;  -- 	RETURN
-           130 : 0000;  -- SquareInput: DW 0
-           131 : 0000;  -- Index:		 DW 0
-           132 : 0000;  -- SquareVal:	 DW 0
-           133 : 203A;  -- I2CWCmd:  DW &H203A    ; write two i2c bytes, addr 0x3A
-           134 : 113A;  -- I2CR1Cmd: DW &H113A    ; write one byte, read one byte, addr 0x3A
-           135 : 123A;  -- I2CR2Cmd: DW &H123A    ; write one byte, read two bytes, addr 0x3A
-           136 : 0030;  -- INT_SOURCE: DW &H030
-           137 : 0032;  -- AccXAddr: DW &H32      ; X acceleration register address.
-           138 : 0034;  -- AccYAddr: DW &H34      ; Y
-           139 : 0036;  -- AccZAddr: DW &H36      ; Z
-           13A : 0005;  -- 	DW 5           ; Number of commands to send
-           13B : 0000;  -- 	DW &H0000      ; Meaningless write to sync communication
-           13C : 3101;  -- 	DW &H3101      ; Right-justified 10-bit data, +/-8 G
-           13D : 3800;  -- 	DW &H3800      ; No FIFO
-           13E : 2C07;  -- 	DW &H2C07      ; 50 samples per second
-           13F : 2D08;  -- 	DW &H2D08      ; No sleep
-           140 : 0000;  -- StepCount: DW 0
-           141 : 0000;  -- Dist:	   DW 0
-           142 : 0000;  -- ReadCount: DW 0
-           143 : 0000;  -- Score:     DW 0
-           144 : 0000;  -- Zero:      DW 0
-           145 : FFFF;  -- NegOne:    DW -1
-           146 : 0001;  -- One:	   DW 1
-           147 : 0001;  -- Bit0:      DW &B0000000001
-           148 : 0002;  -- Bit1:      DW &B0000000010
-           149 : 0004;  -- Bit2:      DW &B0000000100
-           14A : 0008;  -- Bit3:      DW &B0000001000
-           14B : 0010;  -- Bit4:      DW &B0000010000
-           14C : 0020;  -- Bit5:      DW &B0000100000
-           14D : 0040;  -- Bit6:      DW &B0001000000
-           14E : 0080;  -- Bit7:      DW &B0010000000
-           14F : 0100;  -- Bit8:      DW &B0100000000
-           150 : 0200;  -- Bit9:      DW &B1000000000
-           151 : 00FF;  -- LoByte:    DW &H00FF
-           152 : FF00;  -- HiByte:    DW &HFF00
-           153 : 3000;  -- NormConst: DW &H3000	;experimental value
-           154 : 4000;  -- Threshold: DW &H4000	;experimental value
-           155 : 0000;  -- X0:         DW 0
-           156 : 0000;  -- X1:         DW 0
-           157 : 0000;  -- X2:         DW 0
-           158 : 0000;  -- X3:         DW 0
-           159 : 0000;  -- Xtemp:      DW 0
+           002 : 1143;  -- 	STORE  ReadCount   ; Initialize loop counter
+           003 : 1141;  -- 	STORE  StepCount   ; Initialize step counter
+           004 : 1142;  -- 	STORE  Dist		   ; Initialize distance counter
+           005 : 8090;  -- 	CALL    WaitForData ; Subroutine to wait for new data
+           006 : 0943;  -- 	LOAD   ReadCount
+           007 : 6801;  -- 	ADDI   1
+           008 : 1143;  -- 	STORE  ReadCount
+           009 : 80E8;  -- 	CALL	ReadX       ; Get the X acceleration data
+           00A : 8122;  -- 	CALL	Square
+           00B : 102C;  -- 	STORE	X_squared
+           00C : 80F2;  -- 	CALL 	ReadY
+           00D : 8122;  -- 	CALL	Square
+           00E : 102D;  -- 	STORE	Y_squared
+           00F : 80FC;  -- 	CALL	ReadZ
+           010 : 8122;  -- 	CALL	Square
+           011 : 102E;  -- 	STORE	Z_squared
+           012 : B800;  -- 	LOADI	0
+           013 : 182C;  -- 	ADD		X_squared
+           014 : 182D;  -- 	ADD		Y_squared
+           015 : 182E;  -- 	ADD		Z_squared
+           016 : 2154;  -- 	SUB     NormConst
+           017 : 102F;  -- 	STORE	Mag_squared
+           018 : 809A;  -- 	CALL	Filter      ; Calculate moving average
+           019 : 8030;  -- 	CALL	DetectPeak
+           01A : 806A;  -- 	CALL	KeyTest
+           01B : 0882;  -- 	LOAD	KeyPressed
+           01C : 4020;  -- 	JZERO	ShowHex0
+           01D : 0869;  -- 	LOAD	ShowDist
+           01E : 5948;  -- 	XOR		Bit0
+           01F : 1069;  -- 	STORE	ShowDist
+           020 : 0869;  -- 		LOAD	ShowDist
+           021 : 3827;  -- 		JPOS	DisplayDist
+           022 : 0941;  -- 		LOAD	StepCount
+           023 : B800;  -- 		LOADI	0
+           024 : 9801;  -- 		OUT		LEDs
+           025 : 0941;  -- 		LOAD	StepCount
+           026 : 282A;  -- 		JUMP	UpdateHex0
+           027 : B801;  -- 		LOADI	1
+           028 : 9801;  -- 		OUT		LEDs
+           029 : 0942;  -- 		LOAD	Dist
+           02A : 9804;  -- 		OUT		Hex0
+           02B : 2805;  -- 	JUMP    ReadLoop    ; Repeat forever
+           02C : 0000;  -- X_squared: 	   DW 0
+           02D : 0000;  -- Y_squared: 	   DW 0
+           02E : 0000;  -- Z_squared: 	   DW 0
+           02F : 0000;  -- Mag_squared:   DW 0
+           030 : 088D;  -- 	LOAD	InPeakBoolean
+           031 : 3849;  -- 	JPOS	InPeak
+           032 : 0885;  -- 	LOAD	StartVec1
+           033 : 1083;  -- 	STORE	StartVec0
+           034 : 0886;  -- 	LOAD	StartTime1
+           035 : 1084;  -- 	STORE	StartTime0
+           036 : 0887;  -- 	LOAD	StartVec2
+           037 : 1085;  -- 	STORE	StartVec1
+           038 : 0888;  -- 	LOAD	StartTime2
+           039 : 1086;  -- 	STORE	StartTime1
+           03A : 082F;  -- 	LOAD	Mag_squared
+           03B : 1087;  -- 	STORE	StartVec2
+           03C : 0943;  -- 	LOAD	ReadCount
+           03D : 1088;  -- 	STORE	StartTime2
+           03E : 0883;  -- 	LOAD 	StartVec0
+           03F : 2085;  -- 	SUB  	StartVec1
+           040 : 3868;  -- 	JPOS 	EndDetectPeak
+           041 : 0885;  -- 	LOAD 	StartVec1
+           042 : 2087;  -- 	SUB  	StartVec2
+           043 : 3868;  -- 	JPOS 	EndDetectPeak
+           044 : 0887;  -- 	LOAD	StartVec2
+           045 : 2155;  -- 	SUB		Threshold
+           046 : 3068;  -- 	JNEG	EndDetectPeak
+           047 : B801;  -- 	LOADI	1
+           048 : 108D;  -- 	STORE	InPeakBoolean
+           049 : 082F;  -- 	LOAD	Mag_squared
+           04A : 208E;  -- 	SUB		MaxPeakValue
+           04B : 304F;  -- 	JNEG	UpdateEndVec
+           04C : 082F;  -- 	LOAD 	Mag_squared
+           04D : 108E;  -- 	STORE	MaxPeakValue
+           04E : 2868;  -- 	JUMP	EndDetectPeak
+           04F : 088B;  -- 	LOAD	EndVec1
+           050 : 1089;  -- 	STORE	EndVec0
+           051 : 088C;  -- 	LOAD	EndTime1
+           052 : 108A;  -- 	STORE	EndTime0
+           053 : 082F;  -- 	LOAD	Mag_squared
+           054 : 108B;  -- 	STORE	EndVec1
+           055 : 0943;  -- 	LOAD	ReadCount
+           056 : 108C;  -- 	STORE	EndTime1
+           057 : 0889;  -- 	LOAD	EndVec0
+           058 : 208B;  -- 	SUB		EndVec1
+           059 : 3868;  -- 	JPOS	EndDetectPeak
+           05A : 088B;  -- 	LOAD	EndVec1
+           05B : 2155;  -- 	SUB		Threshold
+           05C : 3868;  -- 	JPOS	EndDetectPeak
+           05D : B800;  -- 	LOADI	0
+           05E : 108D;  -- 	STORE	InPeakBoolean
+           05F : 0941;  -- 	LOAD	StepCount
+           060 : 6801;  -- 	ADDI	1
+           061 : 1141;  -- 	STORE	StepCount
+           062 : 0941;  -- 	LOAD	StepCount
+           063 : 6002;  -- 	Shift	2
+           064 : 1142;  -- 	STORE	Dist
+           065 : 088C;  -- 	LOAD	EndTime1
+           066 : 2084;  -- 	SUB		StartTime0
+           067 : 108F;  -- 	STORE	TimeInPeak
+           068 : 8800;  -- 	RETURN
+           069 : 0000;  -- ShowDist:	DW 0 ; 0 to show step, 1 to show distance
+           06A : B800;  -- 	LOADI	0
+           06B : 1082;  -- 	STORE	KeyPressed
+           06C : 0881;  -- 	LOAD	KeyDown
+           06D : 4948;  -- 	AND		Bit0
+           06E : 3875;  -- 	JPOS	WasDown
+           06F : 9006;  -- 	IN		Key1
+           070 : 4948;  -- 	AND		Bit0
+           071 : 407B;  -- 	JZERO	NotPressed
+           072 : B801;  -- 	LOADI	1
+           073 : 1081;  -- 	STORE	KeyDown
+           074 : 287B;  -- 	JUMP	NotPressed
+           075 : 9006;  -- 		IN		Key1
+           076 : 4948;  -- 		AND		Bit0
+           077 : 387B;  -- 		JPOS	NotPressed
+           078 : B800;  -- 		LOADI	0
+           079 : 1081;  -- 		STORE	KeyDown
+           07A : 287E;  -- 		Jump	Pressed
+           07B : B800;  -- 			LOADI	0
+           07C : 1082;  -- 			STORE	KeyPressed
+           07D : 8800;  -- 			RETURN
+           07E : B801;  -- 			LOADI	1
+           07F : 1082;  -- 			STORE	KeyPressed
+           080 : 8800;  -- 			RETURN
+           081 : 0000;  -- KeyDown:	DW 0
+           082 : 0000;  -- KeyPressed: DW 0
+           083 : 0000;  -- StartVec0: 	   DW 0
+           084 : 0000;  -- StartTime0:	   DW 0
+           085 : 0000;  -- StartVec1: 	   DW 0
+           086 : 0000;  -- StartTime1:	   DW 0
+           087 : 0000;  -- StartVec2: 	   DW 0
+           088 : 0000;  -- StartTime2:	   DW 0 
+           089 : 0000;  -- EndVec0:	   DW 0
+           08A : 0000;  -- EndTime0:	   DW 0
+           08B : 0000;  -- EndVec1:	   DW 0
+           08C : 0000;  -- EndTime1:	   DW 0
+           08D : 0000;  -- InPeakBoolean: DW 0
+           08E : 0000;  -- MaxPeakValue:  DW 0
+           08F : 0000;  -- TimeInPeak:	   DW 0
+           090 : 0935;  -- 	LOAD I2CR1Cmd     ; 1 byte will be written
+           091 : 9890;  -- 	OUT  I2C_CMD
+           092 : 0937;  -- 	LOAD INT_SOURCE   ; address of the INT_SOURCE register
+           093 : 9891;  -- 	OUT  I2C_DATA
+           094 : 9892;  -- 	OUT  I2C_RDY      ; start communictaion
+           095 : 8110;  -- 	CALL BlockI2C
+           096 : 9091;  -- 	IN   I2C_DATA     ; Load data
+           097 : 494F;  -- 	AND  Bit7         ; Mask for DATA_READY 
+           098 : 4090;  -- 	JZERO WaitForData ; If DATA_READY inactive
+           099 : 8800;  -- 	RETURN
+           09A : 115A;  -- 	STORE  Xtemp        ; Store the acceleration data first
+           09B : 0957;  -- 	LOAD   X1           ; Shift queue down
+           09C : 1156;  -- 	STORE  X0
+           09D : 0958;  -- 	LOAD   X2
+           09E : 1157;  -- 	STORE  X1
+           09F : 0959;  -- 	LOAD   X3
+           0A0 : 1158;  -- 	STORE  X2
+           0A1 : 095A;  -- 	LOAD   Xtemp
+           0A2 : 1159;  -- 	STORE  X3
+           0A3 : 80A5;  -- 	CALL   Average
+           0A4 : 8800;  -- 	RETURN
+           0A5 : 0956;  --     LOAD X0
+           0A6 : 1957;  -- 	ADD  X1
+           0A7 : 1958;  -- 	ADD  X2
+           0A8 : 1959;  -- 	ADD  X3
+           0A9 : 6012;  -- 	SHIFT -2
+           0AA : 8800;  -- 	RETURN
+           0AB : 6015;  -- 	SHIFT  -5
+           0AC : 10C8;  -- 	STORE  BarVal
+           0AD : 40C6;  -- 	JZERO  DisplayBar
+           0AE : 38BB;  -- 	JPOS   BarLeft
+           0AF : B800;  -- 	LOADI  0
+           0B0 : 10C9;  -- 	STORE  CurrBar
+           0B1 : 08C9;  -- 	LOAD   CurrBar
+           0B2 : 6001;  -- 	SHIFT  1
+           0B3 : 6801;  -- 	ADDI   1
+           0B4 : 10C9;  -- 	STORE  CurrBar
+           0B5 : 08C8;  -- 	LOAD   BarVal
+           0B6 : 6801;  -- 	ADDI   1
+           0B7 : 10C8;  -- 	STORE  BarVal
+           0B8 : 30B1;  -- 	JNEG   BarRightLoop
+           0B9 : 08C9;  -- 	LOAD   CurrBar
+           0BA : 28C6;  -- 	JUMP   DisplayBar
+           0BB : BC00;  -- 	LOADI  &B10000000000
+           0BC : 10C9;  -- 	STORE  CurrBar
+           0BD : 08C9;  -- 	LOAD   CurrBar
+           0BE : 6011;  -- 	SHIFT  -1
+           0BF : 10C9;  -- 	STORE  CurrBar
+           0C0 : 08C8;  -- 	LOAD   BarVal
+           0C1 : 6FFF;  -- 	ADDI   -1
+           0C2 : 10C8;  -- 	STORE  BarVal
+           0C3 : 38BD;  -- 	JPOS   BarLeftLoop
+           0C4 : 08C9;  -- 	LOAD   CurrBar
+           0C5 : 28C6;  -- 	JUMP   DisplayBar
+           0C6 : 9801;  -- 	OUT    LEDs
+           0C7 : 8800;  -- 	RETURN
+           0C8 : 0000;  -- BarVal:    DW 0             ; Incoming data value
+           0C9 : 0000;  -- CurrBar:   DW 0             ; Current LED display
+           0CA : 9802;  -- 	OUT    Timer
+           0CB : 9002;  -- 	IN     Timer
+           0CC : 6FFF;  -- 	ADDI   -1
+           0CD : 30CB;  -- 	JNEG   WaitingLoop
+           0CE : 8800;  -- 	RETURN
+           0CF : 093B;  -- 	LOAD   AccCfg      ; load the number of commands
+           0D0 : 10E4;  -- 	STORE  CmdCnt
+           0D1 : B93B;  -- 	LOADI  AccCfg      ; Load list ADDRESS
+           0D2 : 6801;  -- 	ADDI   1           ; Increment to first command
+           0D3 : 10E3;  -- 	STORE  CmdPtr
+           0D4 : 8110;  -- 	CALL   BlockI2C    ; wait for idle
+           0D5 : 0934;  -- 	LOAD   I2CWCmd     ; load write command
+           0D6 : 9890;  -- 	OUT    I2C_CMD     ; to I2C_CMD register
+           0D7 : 70E3;  -- 	ILOAD  CmdPtr      ; load current command
+           0D8 : 9891;  -- 	OUT    I2C_DATA    ; to I2C_DATA register
+           0D9 : 9892;  -- 	OUT    I2C_RDY     ; start the communication
+           0DA : 8110;  -- 	CALL   BlockI2C    ; wait for it to finish
+           0DB : 08E3;  -- 	LOAD   CmdPtr
+           0DC : 6801;  -- 	ADDI   1           ; Increment to next command
+           0DD : 10E3;  -- 	STORE  CmdPtr
+           0DE : 08E4;  -- 	LOAD   CmdCnt
+           0DF : 6FFF;  -- 	ADDI   -1
+           0E0 : 10E4;  -- 	STORE  CmdCnt
+           0E1 : 38D4;  -- 	JPOS   I2CCmdLoop
+           0E2 : 8800;  -- 	RETURN
+           0E3 : 0000;  -- CmdPtr: DW 0
+           0E4 : 0000;  -- CmdCnt: DW 0
+           0E5 : 0000;  -- CurrX: DW 0
+           0E6 : 0000;  -- CurrY: DW 0
+           0E7 : 0000;  -- CurrZ: DW 0
+           0E8 : 8110;  -- 	CALL   BlockI2C    ; wait for idle
+           0E9 : 0936;  -- 	LOAD   I2CR2Cmd    ; load command
+           0EA : 9890;  -- 	OUT    I2C_CMD     ; to I2C_CMD register
+           0EB : 0938;  -- 	LOAD   AccXAddr    ; 
+           0EC : 9891;  -- 	OUT    I2C_DATA    ; to I2C_DATA register
+           0ED : 9892;  -- 	OUT    I2C_RDY     ; start the communication
+           0EE : 8110;  -- 	CALL   BlockI2C    ; wait for it to finish
+           0EF : 9091;  -- 	IN     I2C_data    ; put the data in AC
+           0F0 : 8106;  -- 	CALL   SwapBytes   ; bytes returned in wrong order; swap them
+           0F1 : 8800;  -- 	RETURN
+           0F2 : 8110;  -- 	CALL   BlockI2C    ; wait for idle
+           0F3 : 0936;  -- 	LOAD   I2CR2Cmd    ; load command
+           0F4 : 9890;  -- 	OUT    I2C_CMD     ; to I2C_CMD register
+           0F5 : 0939;  -- 	LOAD   AccYAddr    ; 
+           0F6 : 9891;  -- 	OUT    I2C_DATA    ; to I2C_DATA register
+           0F7 : 9892;  -- 	OUT    I2C_RDY     ; start the communication
+           0F8 : 8110;  -- 	CALL   BlockI2C    ; wait for it to finish
+           0F9 : 9091;  -- 	IN     I2C_data    ; put the data in AC
+           0FA : 8106;  -- 	CALL   SwapBytes   ; bytes returned in wrong order; swap them
+           0FB : 8800;  -- 	RETURN
+           0FC : 8110;  -- 	CALL   BlockI2C    ; wait for idle
+           0FD : 0936;  -- 	LOAD   I2CR2Cmd    ; load command
+           0FE : 9890;  -- 	OUT    I2C_CMD     ; to I2C_CMD register
+           0FF : 093A;  -- 	LOAD   AccZAddr    ; 
+           100 : 9891;  -- 	OUT    I2C_DATA    ; to I2C_DATA register
+           101 : 9892;  -- 	OUT    I2C_RDY     ; start the communication
+           102 : 8110;  -- 	CALL   BlockI2C    ; wait for it to finish
+           103 : 9091;  -- 	IN     I2C_data    ; put the data in AC
+           104 : 8106;  -- 	CALL   SwapBytes   ; bytes returned in wrong order; swap them
+           105 : 8800;  -- 	RETURN
+           106 : 110E;  -- 	STORE  SBT1
+           107 : 6008;  -- 	SHIFT  8
+           108 : 110F;  -- 	STORE  SBT2
+           109 : 090E;  -- 	LOAD   SBT1
+           10A : 6018;  -- 	SHIFT  -8
+           10B : 4952;  -- 	AND    LoByte
+           10C : 510F;  -- 	OR     SBT2
+           10D : 8800;  -- 	RETURN
+           10E : 0000;  -- SBT1: DW 0
+           10F : 0000;  -- SBT2: DW 0
+           110 : 0945;  -- 	LOAD   Zero
+           111 : 111D;  -- 	STORE  Temp        ; Used to check for timeout
+           112 : 091D;  -- 	LOAD   Temp
+           113 : 6801;  -- 	ADDI   1           ; this will result in ~0.1s timeout
+           114 : 111D;  -- 	STORE  Temp
+           115 : 4119;  -- 	JZERO  I2CError    ; Timeout occurred; error
+           116 : 9092;  -- 	IN     I2C_RDY     ; Read busy signal
+           117 : 3912;  -- 	JPOS   BI2CL       ; If not 0, try again
+           118 : 8800;  -- 	RETURN             ; Else return
+           119 : 0945;  -- 	LOAD   Zero
+           11A : 692C;  -- 	ADDI   &H12C       ; "I2C"
+           11B : 9805;  -- 	OUT    Hex1        ; display error message
+           11C : 2919;  -- 	JUMP   I2CError
+           11D : 0000;  -- Temp:      DW 0
+           11E : 3921;  -- 	JPOS   Abs_r
+           11F : 5946;  -- 	XOR    NegOne       ; Flip all bits
+           120 : 6801;  -- 	ADDI   1            ; Add one (i.e. negate number)
+           121 : 8800;  -- 	RETURN
+           122 : 811E;  -- 	CALL  Abs
+           123 : 1131;  -- 	STORE SquareInput
+           124 : 1132;  -- 	STORE Index
+           125 : B800;  -- 	LOADI 0
+           126 : 1133;  -- 	STORE SquareVal
+           127 : 0932;  -- 	LOAD  Index
+           128 : 412F;  -- 	JZERO SquareFound
+           129 : 1946;  -- 	ADD   NegOne
+           12A : 1132;  -- 	STORE Index
+           12B : 0933;  -- 	LOAD  SquareVal
+           12C : 1931;  -- 	ADD   SquareInput
+           12D : 1133;  -- 	STORE SquareVal
+           12E : 2927;  -- 	JUMP  UpdateSquare
+           12F : 0933;  -- 	LOAD  SquareVal
+           130 : 8800;  -- 	RETURN
+           131 : 0000;  -- SquareInput: DW 0
+           132 : 0000;  -- Index:		 DW 0
+           133 : 0000;  -- SquareVal:	 DW 0
+           134 : 203A;  -- I2CWCmd:  DW &H203A    ; write two i2c bytes, addr 0x3A
+           135 : 113A;  -- I2CR1Cmd: DW &H113A    ; write one byte, read one byte, addr 0x3A
+           136 : 123A;  -- I2CR2Cmd: DW &H123A    ; write one byte, read two bytes, addr 0x3A
+           137 : 0030;  -- INT_SOURCE: DW &H030
+           138 : 0032;  -- AccXAddr: DW &H32      ; X acceleration register address.
+           139 : 0034;  -- AccYAddr: DW &H34      ; Y
+           13A : 0036;  -- AccZAddr: DW &H36      ; Z
+           13B : 0005;  -- 	DW 5           ; Number of commands to send
+           13C : 0000;  -- 	DW &H0000      ; Meaningless write to sync communication
+           13D : 3101;  -- 	DW &H3101      ; Right-justified 10-bit data, +/-8 G
+           13E : 3800;  -- 	DW &H3800      ; No FIFO
+           13F : 2C07;  -- 	DW &H2C07      ; 50 samples per second
+           140 : 2D08;  -- 	DW &H2D08      ; No sleep
+           141 : 0000;  -- StepCount: DW 0
+           142 : 0000;  -- Dist:	   DW 0
+           143 : 0000;  -- ReadCount: DW 0
+           144 : 0000;  -- Score:     DW 0
+           145 : 0000;  -- Zero:      DW 0
+           146 : FFFF;  -- NegOne:    DW -1
+           147 : 0001;  -- One:	   DW 1
+           148 : 0001;  -- Bit0:      DW &B0000000001
+           149 : 0002;  -- Bit1:      DW &B0000000010
+           14A : 0004;  -- Bit2:      DW &B0000000100
+           14B : 0008;  -- Bit3:      DW &B0000001000
+           14C : 0010;  -- Bit4:      DW &B0000010000
+           14D : 0020;  -- Bit5:      DW &B0000100000
+           14E : 0040;  -- Bit6:      DW &B0001000000
+           14F : 0080;  -- Bit7:      DW &B0010000000
+           150 : 0100;  -- Bit8:      DW &B0100000000
+           151 : 0200;  -- Bit9:      DW &B1000000000
+           152 : 00FF;  -- LoByte:    DW &H00FF
+           153 : FF00;  -- HiByte:    DW &HFF00
+           154 : 3000;  -- NormConst: DW &H3000	;experimental value
+           155 : 4000;  -- Threshold: DW &H4000	;experimental value
+           156 : 0000;  -- X0:         DW 0
+           157 : 0000;  -- X1:         DW 0
+           158 : 0000;  -- X2:         DW 0
+           159 : 0000;  -- X3:         DW 0
+           15A : 0000;  -- Xtemp:      DW 0
   END;

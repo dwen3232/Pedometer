@@ -39,7 +39,7 @@ ReadLoop:
 	
 	CALL	Filter      ; Calculate moving average
 	; OUT		Hex0        ; Display unfiltered data
-	
+	; CALL    BarGraph
 	CALL	DetectPeak
 	
 	CALL	KeyTest
